@@ -15,6 +15,7 @@ import {
   Zap,
   BookOpen,
 } from "lucide-react";
+import { submitOnboarding } from "../services/agentApi";
 
 // --- Configuration for Role-Based Flows ---
 
@@ -315,7 +316,7 @@ const FLOWS = {
 };
 
 const Onboarding = () => {
-  const { completeOnboarding } = useAuth();
+  const { user, completeOnboarding } = useAuth();
   const navigate = useNavigate();
 
   // State
@@ -398,8 +399,22 @@ const Onboarding = () => {
       ...formData,
       learning_preferences_extra: otherPrefs,
     };
+
+    // Submit to Express backend (marks user as onboarded)
     const result = await completeOnboarding(finalData);
     if (result.success) {
+      // Also submit to agent API for career guidance
+      try {
+        await submitOnboarding(user?.id || "anonymous", user?.name || "User", {
+          // Send all collected fields
+          exposure_level: formData.exposure_level,
+          learning_preferences: formData.learning_preferences || [],
+          interests: formData.curiosity || [], // Map curiosity topics to interests
+        });
+      } catch (err) {
+        console.warn("Agent API submission failed:", err);
+        // Continue anyway - Express onboarding succeeded
+      }
       navigate("/");
     } else {
       console.error("Onboarding failed:", result.error);
