@@ -154,6 +154,47 @@ export const healthCheck = async () => {
   return response.json();
 };
 
+/**
+ * Send a chat message to the agent
+ */
+export const sendChatMessage = async (userId, message, sessionId) => {
+  const response = await fetch(`${AGENT_API_URL}/api/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      user_id: userId,
+      message,
+      session_id: sessionId,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || "Chat request failed");
+  }
+
+  return response.json();
+};
+
+/**
+ * Clear a chat session
+ */
+export const clearChatSession = async (sessionId) => {
+  const response = await fetch(
+    `${AGENT_API_URL}/api/chat/session/${sessionId}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || "Failed to clear chat session");
+  }
+
+  return true;
+};
+
 export default {
   submitOnboarding,
   submitSkills,
@@ -161,4 +202,6 @@ export default {
   triggerEvent,
   getUserProfile,
   healthCheck,
+  sendChatMessage,
+  clearChatSession,
 };
