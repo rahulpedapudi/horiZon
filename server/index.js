@@ -10,6 +10,7 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 import newsRoutes from "./routes/news.js";
 import jobsRoutes from "./routes/jobs.js";
+import chatRoutes from "./routes/chat.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -32,6 +33,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/jobs", jobsRoutes);
+app.use("/api/chats", chatRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
