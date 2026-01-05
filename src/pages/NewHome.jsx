@@ -151,10 +151,10 @@ const NewHome = () => {
         <InsightsPanel insights={dashboardData.insights} />
 
         <SkillsSnapshot skills={dashboardData.skillsSnapshot} />
-        {/* 
+
         {dashboardData.recentActivity?.length > 0 && (
           <ActivityFeed activities={dashboardData.recentActivity} />
-        )} */}
+        )}
 
         <div className="max-w-7xl mx-auto px-6 pb-20 text-center">
           <button

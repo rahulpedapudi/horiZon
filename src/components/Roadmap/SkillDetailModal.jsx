@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Play, CheckCircle, Clock } from 'lucide-react';
 
-export const SkillDetailModal = ({ skill, onClose }) => {
+export const SkillDetailModal = ({ skill, onClose, onToggle }) => {
     const [activeTab, setActiveTab] = useState('overview');
 
     const tabs = [
@@ -11,6 +11,12 @@ export const SkillDetailModal = ({ skill, onClose }) => {
         { id: 'practice', label: 'Practice' },
         { id: 'tracking', label: 'Tracking' }
     ];
+
+    const handleToggle = () => {
+        if (onToggle) {
+            onToggle(skill);
+        }
+    };
 
     return (
         <AnimatePresence>
@@ -111,8 +117,14 @@ export const SkillDetailModal = ({ skill, onClose }) => {
                                     </div>
                                     <span className="text-xl font-bold text-blue-700 dark:text-blue-300">4.5h</span>
                                 </div>
-                                <button className="w-full py-2.5 bg-black dark:bg-white text-white dark:text-black rounded-lg font-bold hover:opacity-90 transition-opacity">
-                                    Mark as Completed
+                                <button
+                                    onClick={handleToggle}
+                                    className={`w-full py-2.5 rounded-lg font-bold transition-all ${skill.status === 'completed'
+                                            ? 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400'
+                                            : 'bg-black dark:bg-white text-white dark:text-black hover:opacity-90'
+                                        }`}
+                                >
+                                    {skill.status === 'completed' ? 'Mark as Incomplete' : 'Mark as Completed'}
                                 </button>
                             </div>
                         )}

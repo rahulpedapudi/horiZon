@@ -90,4 +90,32 @@ router.put("/profile", async (req, res) => {
   }
 });
 
+// @route   PUT /api/user/roadmap
+// @desc    Update roadmap progress
+router.put("/roadmap", async (req, res) => {
+  try {
+    const { roadmapProgress, roadmapId } = req.body; // Expecting a map/object of skill statuses
+
+    console.log("Updating roadmap for user:", req.user._id);
+
+    const profile = await UserProfile.findOneAndUpdate(
+      { userId: req.user._id },
+      {
+        $set: {
+          roadmapProgress: roadmapProgress
+        }
+      },
+      { new: true, upsert: true }
+    );
+
+    res.json({
+      message: "Roadmap progress saved",
+      roadmapProgress: profile.roadmapProgress
+    });
+  } catch (error) {
+    console.error("Save roadmap error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;
