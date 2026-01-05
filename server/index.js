@@ -8,6 +8,7 @@ import "./config/passport.js";
 // Route imports
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
+import newsRoutes from "./routes/news.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -28,6 +29,7 @@ app.use(cookieParser());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/news", newsRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -43,3 +45,5 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+// Trigger restart for env update
