@@ -9,6 +9,7 @@ import "./config/passport.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 import newsRoutes from "./routes/news.js";
+import jobsRoutes from "./routes/jobs.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -30,6 +31,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/news", newsRoutes);
+app.use("/api/jobs", jobsRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -40,6 +42,11 @@ app.get("/api/health", (req, res) => {
 app.use((err, req, res, next) => {
   console.error("Server error:", err);
   res.status(500).json({ message: "Internal server error" });
+});
+
+// Basic root route
+app.get("/", (req, res) => {
+  res.send("HoriZon API is running.");
 });
 
 app.listen(PORT, () => {
