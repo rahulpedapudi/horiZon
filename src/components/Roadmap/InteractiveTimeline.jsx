@@ -1,32 +1,39 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Lock, PlayCircle, ChevronDown, ChevronRight, Book, Code, Trophy } from 'lucide-react';
+import { CheckCircle2, Lock, PlayCircle, ChevronDown, ChevronRight, Circle } from 'lucide-react';
 
-export const InteractiveTimeline = ({ phases, onSkillClick }) => {
+export const InteractiveTimeline = ({ phases, onSkillClick, onToggleSkill }) => {
     return (
         <div className="max-w-4xl mx-auto pl-4 md:pl-0">
             <div className="relative border-l-2 border-gray-200 dark:border-gray-800 space-y-8 pb-20">
                 {phases.map((phase, index) => (
-                    <TimelinePhase key={phase.id} phase={phase} index={index} onSkillClick={onSkillClick} />
+                    <TimelinePhase
+                        key={phase.id}
+                        phase={phase}
+                        index={index}
+                        onSkillClick={onSkillClick}
+                        onToggleSkill={onToggleSkill}
+                    />
                 ))}
             </div>
         </div>
     );
 };
 
-const TimelinePhase = ({ phase, index, onSkillClick }) => {
+const TimelinePhase = ({ phase, index, onSkillClick, onToggleSkill }) => {
     const [isOpen, setIsOpen] = useState(index === 0 || phase.status === 'in-progress');
 
     const statusColors = {
         completed: 'bg-green-500 border-green-500 text-white',
         'in-progress': 'bg-blue-600 border-blue-600 text-white',
+        'not-started': 'bg-gray-200 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-400',
         locked: 'bg-gray-200 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-400'
     };
 
     return (
         <div className="relative pl-8 md:pl-12">
             {/* Connector Dot */}
-            <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 ${statusColors[phase.status].split(' ')[1]} bg-white dark:bg-gray-900 z-10`} />
+            <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 ${statusColors[phase.status].split(' ')[1]} bg-white dark:bg-gray-900 z-10 transition-colors duration-500`} />
 
             {/* Phase Header */}
             <div
@@ -37,7 +44,7 @@ const TimelinePhase = ({ phase, index, onSkillClick }) => {
                     <div>
                         <div className="flex items-center gap-3 mb-1">
                             <span className={`text-xs font-bold px-2 py-0.5 rounded uppercase ${phase.status === 'completed' ? 'bg-green-100 text-green-700' : phase.status === 'in-progress' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
-                                {phase.status}
+                                {phase.status === 'not-started' ? 'To Do' : phase.status}
                             </span>
                             <span className="text-xs text-gray-500">{phase.timeRange}</span>
                         </div>
@@ -65,7 +72,12 @@ const TimelinePhase = ({ phase, index, onSkillClick }) => {
                         className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-hidden"
                     >
                         {phase.skills.map((skill) => (
-                            <SkillCard key={skill.id} skill={skill} onClick={() => onSkillClick(skill)} />
+                            <SkillCard
+                                key={skill.id}
+                                skill={skill}
+                                onClick={() => onSkillClick(skill)}
+                                onToggle={() => onToggleSkill && onToggleSkill(phase.id, skill.id)}
+                            />
                         ))}
                     </motion.div>
                 )}
@@ -74,12 +86,21 @@ const TimelinePhase = ({ phase, index, onSkillClick }) => {
     );
 };
 
-const SkillCard = ({ skill, onClick }) => {
+const SkillCard = ({ skill, onClick, onToggle }) => {
+
+    // Stop propagation to prevent opening the modal when clicking the icon
+    const handleIconClick = (e) => {
+        e.stopPropagation();
+        if (skill.status !== 'locked') {
+            onToggle();
+        }
+    };
+
     const icons = {
-        completed: <CheckCircle2 size={18} className="text-green-500" />,
-        'in-progress': <PlayCircle size={18} className="text-blue-500" />,
-        'not-started': <div className="w-4 h-4 rounded-full border-2 border-gray-300" />,
-        locked: <Lock size={16} className="text-gray-400" />
+        completed: <CheckCircle2 size={24} className="text-green-500 fill-green-50" />,
+        'in-progress': <PlayCircle size={24} className="text-blue-500 fill-blue-50" />,
+        'not-started': <Circle size={24} className="text-gray-300 hover:text-gray-400" />,
+        locked: <Lock size={20} className="text-gray-300" />
     };
 
     return (
@@ -92,7 +113,15 @@ const SkillCard = ({ skill, onClick }) => {
             <div>
                 <div className="flex justify-between items-start mb-2">
                     <span className="font-semibold text-gray-800 dark:text-gray-200">{skill.name}</span>
-                    {icons[skill.status]}
+
+                    {/* Interactive Icon Area */}
+                    <div
+                        onClick={handleIconClick}
+                        className={`p-1 -mr-1 -mt-1 rounded-full transition-all hover:bg-gray-50 dark:hover:bg-gray-800 ${skill.status === 'locked' ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-110 active:scale-95'}`}
+                        title={skill.status === 'completed' ? "Mark as incomplete" : "Mark as complete"}
+                    >
+                        {icons[skill.status]}
+                    </div>
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{skill.description}</p>
             </div>

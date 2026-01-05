@@ -36,8 +36,13 @@ const userProfileSchema = new mongoose.Schema(
     },
     learningPreferencesExtra: {
       type: String,
-      default: null,
+      default: "",
     },
+    roadmapProgress: {
+      type: Map,
+      of: String, // Storing skillId -> status (e.g., "p1-s1": "completed")
+      default: {}
+    }
   },
   {
     timestamps: true,

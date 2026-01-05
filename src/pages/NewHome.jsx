@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { homeData } from '../data/homeData';
 import { useInterest } from '../context/InterestContext';
@@ -11,6 +11,8 @@ import {
     NextAction
 } from '../components/Home/HomeComponents';
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+
 const NewHome = () => {
     const { currentInterest } = useInterest();
     const { scrollYProgress } = useScroll();
@@ -19,6 +21,57 @@ const NewHome = () => {
         damping: 30,
         restDelta: 0.001
     });
+
+    const [userData, setUserData] = useState(homeData.user);
+    const [dynamicInterests, setDynamicInterests] = useState(homeData.activeInterests);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await fetch(`${API_URL}/api/user/profile`, { credentials: 'include' });
+                if (res.ok) {
+                    const data = await res.json();
+
+                    // Update User Basic Info
+                    if (data.user) {
+                        setUserData(prev => ({
+                            ...prev,
+                            name: data.user.name,
+                            avatar: data.user.avatar || prev.avatar
+                        }));
+                    }
+
+                    // Strict update for interests: If profile exists, use its skills (even if empty)
+                    if (data.profile) {
+                        // If we have skills, map them. If not, it's an empty array.
+                        const skills = data.profile.skills || [];
+                        if (skills.length > 0) {
+                            const mappedInterests = skills.map((skill, index) => ({
+                                id: index,
+                                title: skill,
+                                category: "Focus Area",
+                                progress: 0,
+                                totalModules: 10,
+                                status: "Active",
+                                color: ["from-blue-500 to-cyan-500", "from-purple-500 to-pink-500", "from-orange-500 to-red-500"][index % 3] // Rotate colors
+                            }));
+                            setDynamicInterests(mappedInterests);
+                        } else {
+                            // User has no skills selected yet
+                            setDynamicInterests([]);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch user profile:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, []);
 
     return (
         <div className="relative min-h-screen bg-white dark:bg-black selection:bg-blue-500 selection:text-white">
@@ -42,13 +95,13 @@ const NewHome = () => {
             <div className="relative z-10 flex flex-col gap-8 pb-20">
 
                 {/* Section 1: Welcome & Status */}
-                <WelcomeHeader user={homeData.user} currentInterest={currentInterest} />
+                <WelcomeHeader user={userData} currentInterest={currentInterest} />
 
                 {/* Section 2: Career Status Card */}
                 <StatusCard status={homeData.careerStatus} />
 
                 {/* Section 3: Active Interests */}
-                <ActiveInterests interests={homeData.activeInterests} />
+                <ActiveInterests interests={dynamicInterests} />
 
                 {/* Section 4: Skills Snapshot */}
                 <SkillsSnapshot skills={homeData.skillsSnapshot} />
