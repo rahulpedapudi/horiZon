@@ -1,15 +1,16 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-  Home, 
-  BookOpen, 
-  Map, 
-  Globe, 
-  Newspaper, 
-  History, 
-  Settings, 
-  MessageSquare, 
-  ChevronLeft, 
+import {
+  Home,
+  BookOpen,
+  Map,
+  Globe,
+  Newspaper,
+  History,
+  Settings,
+  MessageSquare,
+  FileText,
+  ChevronLeft,
   ChevronRight
 } from 'lucide-react';
 
@@ -23,6 +24,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen, collapsed, setCollapsed }) => 
     { name: 'Assess My Knowledge', icon: BookOpen, path: '/assess' },
     { name: 'My Roadmaps', icon: Map, path: '/roadmaps' },
     { name: 'Explore Domains', icon: Globe, path: '/explore' },
+    { name: 'Resume Analyzer', icon: FileText, path: '/resume-analyzer' },
     { name: 'News & Trends', icon: Newspaper, path: '/news' },
     { name: 'Learning History', icon: History, path: '/history' },
     { name: 'Chat AI', icon: MessageSquare, path: '/chat' },
@@ -32,14 +34,14 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen, collapsed, setCollapsed }) => 
     <>
       {/* Mobile Overlay */}
       {isMobileOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
       {/* Sidebar Container */}
-      <aside 
+      <aside
         className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-slate-900 border-r border-slate-800 transition-all duration-300 ease-in-out
           ${collapsed ? 'w-20' : 'w-64'}
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
@@ -47,19 +49,17 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen, collapsed, setCollapsed }) => 
       >
         {/* Header */}
         <div className={`flex items-center h-16 px-4 border-b border-slate-800 ${collapsed ? 'justify-center' : 'justify-between'}`}>
-          {!collapsed && (
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate">
-              FutureHub
-            </span>
-          )}
-          <button 
+          <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate">
+            Horizon
+          </span>
+          <button
             onClick={toggleCollapse}
             className="hidden md:flex p-1.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
           >
             {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
-          
-          <button 
+
+          <button
             onClick={() => setIsMobileOpen(false)}
             className="md:hidden p-1.5 text-slate-400"
           >
@@ -76,15 +76,15 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen, collapsed, setCollapsed }) => 
                   to={item.path}
                   className={({ isActive }) => `
                     flex items-center px-3 py-3 rounded-lg transition-colors group relative
-                    ${isActive 
-                      ? 'bg-blue-600/10 text-accent' 
+                    ${isActive
+                      ? 'bg-blue-600/10 text-accent'
                       : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'}
                   `}
                   title={collapsed ? item.name : ''}
                   onClick={() => setIsMobileOpen(false)}
                 >
                   <item.icon size={22} className={`min-w-[22px] ${collapsed ? 'mx-auto' : 'mr-3'}`} />
-                  
+
                   {!collapsed && (
                     <span className="font-medium truncate">{item.name}</span>
                   )}
@@ -107,8 +107,8 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen, collapsed, setCollapsed }) => 
             to="/settings"
             className={({ isActive }) => `
               flex items-center px-3 py-3 rounded-lg transition-colors
-              ${isActive 
-                ? 'bg-blue-600/10 text-accent' 
+              ${isActive
+                ? 'bg-blue-600/10 text-accent'
                 : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'}
             `}
             title="Settings"

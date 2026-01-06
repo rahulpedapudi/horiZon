@@ -235,8 +235,8 @@ const ChatSidebar = ({ isMobileOpen, setIsMobileOpen, isCollapsed, setIsCollapse
               {/* Top Row: Logo + Toggle */}
               <div className="flex items-center justify-between px-2 pt-1">
                 <span className="font-bold text-lg tracking-tight flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-md bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-xs">F</div>
-                  FutureHub
+                  <div className="w-6 h-6 rounded-md bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-xs">H</div>
+                  Horizon
                 </span>
                 <button
                   onClick={() => setIsCollapsed(true)}
@@ -297,7 +297,13 @@ const ChatSidebar = ({ isMobileOpen, setIsMobileOpen, isCollapsed, setIsCollapse
                       {['AI Engineer', 'Software Engineer', 'Data Engineer', 'Data Analyst'].map((role) => (
                         <button
                           key={role}
-                          onClick={() => navigate('/roadmaps')} // For now all go to /roadmaps, to be detailed later
+                          onClick={() => {
+                            if (role === 'Software Engineer') navigate('/roadmaps/software-engineer');
+                            else if (role === 'Data Engineer') navigate('/roadmaps/data-engineer');
+                            else if (role === 'Data Analyst') navigate('/roadmaps/data-analyst');
+                            else if (role === 'AI Engineer') navigate('/roadmaps/ai-ml');
+                            else navigate('/roadmaps');
+                          }}
                           className="w-full text-left px-3 py-1.5 text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
                         >
                           {role}
@@ -307,6 +313,7 @@ const ChatSidebar = ({ isMobileOpen, setIsMobileOpen, isCollapsed, setIsCollapse
                   )}
                 </div>
 
+                <NavItem to="/resume-analyzer" icon={FileText} label="Resume Analyzer" active={location.pathname === '/resume-analyzer'} />
                 <NavItem to="/news" icon={TrendingUp} label="Updates" active={location.pathname === '/news'} />
               </div>
 
@@ -336,7 +343,7 @@ const ChatSidebar = ({ isMobileOpen, setIsMobileOpen, isCollapsed, setIsCollapse
 
             {/* Top: Logo Placeholder */}
             <div className="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center text-white dark:text-black font-bold mb-4 cursor-pointer" onClick={handleExpand} title="Expand Sidebar">
-              F
+              H
             </div>
 
             {/* SECTION ICONS (Grouped logic) */}

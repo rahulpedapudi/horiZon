@@ -20,7 +20,11 @@ import AuthPage from "./pages/AuthPage";
 import Onboarding from "./pages/Onboarding";
 import NewHome from "./pages/NewHome";
 import AIMLRoadmap from "./pages/Roadmaps/AIMLRoadmap";
+import SoftwareEngineeringRoadmap from "./pages/Roadmaps/SoftwareEngineeringRoadmap";
+import DataEngineerRoadmap from "./pages/Roadmaps/DataEngineerRoadmap";
+import DataAnalystRoadmap from "./pages/Roadmaps/DataAnalystRoadmap";
 import RoadmapPage from "./pages/Roadmaps/RoadmapPage";
+import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import { InterestProvider } from "./context/InterestContext";
 import { HorizonProvider } from "./context/HorizonContext";
 
@@ -103,11 +107,18 @@ function App() {
                       element={<Navigate to="/roadmaps/ai-ml" replace />}
                     />
                     <Route path="roadmaps/ai-ml" element={<AIMLRoadmap />} />
+                    <Route path="roadmaps/software-engineer" element={<SoftwareEngineeringRoadmap />} />
+                    <Route path="roadmaps/data-engineer" element={<DataEngineerRoadmap />} />
+                    <Route path="roadmaps/data-analyst" element={<DataAnalystRoadmap />} />
                     <Route
                       path="roadmaps/:roadmapId"
                       element={<RoadmapPage />}
                     />
                     <Route path="explore" element={<ExploreDomains />} />
+                    <Route
+                      path="resume-analyzer"
+                      element={<ResumeAnalyzer />}
+                    />
                     <Route path="news" element={<NewsTrends />} />
                     <Route path="chat" element={<ChatInterface />} />
                     <Route
