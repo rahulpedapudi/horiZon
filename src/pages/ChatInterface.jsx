@@ -147,7 +147,7 @@ const ChatInterface = () => {
                     </span>
                     {settings.showTimestamps && (
                       <span>
-                        {msg.timestamp.toLocaleTimeString([], {
+                        {new Date(msg.timestamp).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
