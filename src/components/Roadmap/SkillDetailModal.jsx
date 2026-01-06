@@ -90,12 +90,30 @@ export const SkillDetailModal = ({ skill, onClose, onToggle }) => {
 
                         {activeTab === 'practice' && (
                             <div className="space-y-3">
-                                {skill.practice?.map((task, idx) => (
-                                    <div key={idx} className="flex items-start gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
-                                        <input type="checkbox" className="mt-1 rounded text-blue-600 focus:ring-blue-500" />
-                                        <label className="text-sm text-gray-700 dark:text-gray-300">{task}</label>
-                                    </div>
-                                ))}
+                                {skill.practice?.map((task, idx) => {
+                                    const isObject = typeof task === 'object' && task !== null;
+                                    const taskText = isObject ? task.text : task;
+                                    const taskLink = isObject ? task.link : null;
+
+                                    return (
+                                        <div key={idx} className="flex items-start gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg group">
+                                            <input type="checkbox" className="mt-1 rounded text-blue-600 focus:ring-blue-500" />
+                                            <div className="flex-1">
+                                                <label className="text-sm text-gray-700 dark:text-gray-300 block">{taskText}</label>
+                                                {taskLink && (
+                                                    <a
+                                                        href={taskLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-1 text-xs text-blue-500 hover:text-blue-700 mt-1 font-medium bg-blue-50 dark:bg-blue-900/10 px-2 py-0.5 rounded transition-colors"
+                                                    >
+                                                        Start Practice <ExternalLink size={10} />
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
 
@@ -120,8 +138,8 @@ export const SkillDetailModal = ({ skill, onClose, onToggle }) => {
                                 <button
                                     onClick={handleToggle}
                                     className={`w-full py-2.5 rounded-lg font-bold transition-all ${skill.status === 'completed'
-                                            ? 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400'
-                                            : 'bg-black dark:bg-white text-white dark:text-black hover:opacity-90'
+                                        ? 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400'
+                                        : 'bg-black dark:bg-white text-white dark:text-black hover:opacity-90'
                                         }`}
                                 >
                                     {skill.status === 'completed' ? 'Mark as Incomplete' : 'Mark as Completed'}

@@ -168,13 +168,18 @@ const StatItem = ({ icon: Icon, label, value, delay }) => (
 
 // --- 3. Active Interests Scroller ---
 export const ActiveInterests = ({ interests }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full mb-20">
       <div className="max-w-7xl mx-auto px-6 mb-6 flex justify-between items-end">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
           Your Active Interests
         </h2>
-        <button className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
+        <button
+          onClick={() => navigate('/roadmaps')}
+          className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+        >
           View All
         </button>
       </div>
@@ -187,7 +192,6 @@ export const ActiveInterests = ({ interests }) => {
     </div>
   );
 };
-
 const InterestCard = ({ interest, index }) => {
   const navigate = useNavigate();
 
@@ -216,9 +220,8 @@ const InterestCard = ({ interest, index }) => {
             <Star size={20} />
           </div>
           <span
-            className={`px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 ${
-              interest.status === "Active" ? "text-green-500" : "text-gray-500"
-            }`}>
+            className={`px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 ${interest.status === "Active" ? "text-green-500" : "text-gray-500"
+              }`}>
             {interest.status}
           </span>
         </div>
@@ -350,11 +353,10 @@ export const ActivityFeed = ({ activities }) => {
                 <span className="text-sm text-gray-500">{activity.time}</span>
               </div>
               <span
-                className={`px-3 py-1 rounded-full text-xs font-bold ${
-                  activity.xp > 0
+                className={`px-3 py-1 rounded-full text-xs font-bold ${activity.xp > 0
                     ? "bg-yellow-100 text-yellow-700"
                     : "bg-gray-100 text-gray-500"
-                }`}>
+                  }`}>
                 {activity.xp > 0 ? `+${activity.xp} XP` : "Started"}
               </span>
             </div>
@@ -367,6 +369,8 @@ export const ActivityFeed = ({ activities }) => {
 
 // --- 6. Next Action (Magnetic) ---
 export const NextAction = ({ action }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="max-w-7xl mx-auto px-6 mb-24">
       <div className="relative overflow-hidden rounded-[40px] bg-black dark:bg-white text-white dark:text-black p-10 md:p-16 text-center shadow-2xl">
@@ -387,6 +391,14 @@ export const NextAction = ({ action }) => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              // Ideally this should navigate to the specific module, but for now linking to the general roadmaps or specific one if ID exists
+              if (action?.roadmapId) {
+                navigate(`/roadmaps/${action.roadmapId}`);
+              } else {
+                navigate('/roadmaps/ai-ml'); // Default to AI/ML or a general page
+              }
+            }}
             className="px-8 py-4 bg-white dark:bg-black text-black dark:text-white rounded-2xl font-bold text-lg flex items-center gap-3 shadow-xl hover:shadow-2xl hover:shadow-white/20 dark:hover:shadow-black/20 transition-all">
             Resume Learning <PlayCircle size={24} />
           </motion.button>
@@ -422,23 +434,21 @@ export const RoadmapTimeline = ({ roadmap }) => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
-            className={`relative p-6 rounded-2xl border ${
-              phase.status === "completed"
-                ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                : phase.status === "in-progress"
+            className={`relative p-6 rounded-2xl border ${phase.status === "completed"
+              ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+              : phase.status === "in-progress"
                 ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                 : "bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-800"
-            }`}>
+              }`}>
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                    phase.status === "completed"
-                      ? "bg-green-500 text-white"
-                      : phase.status === "in-progress"
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${phase.status === "completed"
+                    ? "bg-green-500 text-white"
+                    : phase.status === "in-progress"
                       ? "bg-blue-500 text-white"
                       : "bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
-                  }`}>
+                    }`}>
                   {phase.status === "completed" ? "✓" : index + 1}
                 </div>
                 <div>
@@ -446,18 +456,17 @@ export const RoadmapTimeline = ({ roadmap }) => {
                     {phase.title}
                   </h3>
                   <span
-                    className={`text-xs font-medium ${
-                      phase.status === "completed"
-                        ? "text-green-600"
-                        : phase.status === "in-progress"
+                    className={`text-xs font-medium ${phase.status === "completed"
+                      ? "text-green-600"
+                      : phase.status === "in-progress"
                         ? "text-blue-600"
                         : "text-gray-500"
-                    }`}>
+                      }`}>
                     {phase.status === "completed"
                       ? "Completed"
                       : phase.status === "in-progress"
-                      ? "In Progress"
-                      : "Not Started"}
+                        ? "In Progress"
+                        : "Not Started"}
                   </span>
                 </div>
               </div>
@@ -471,13 +480,12 @@ export const RoadmapTimeline = ({ roadmap }) => {
               {phase.skills?.map((skill) => (
                 <span
                   key={skill.id}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    skill.status === "completed"
-                      ? "bg-green-100 text-green-700 dark:bg-green-800/30 dark:text-green-400"
-                      : skill.status === "in-progress"
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${skill.status === "completed"
+                    ? "bg-green-100 text-green-700 dark:bg-green-800/30 dark:text-green-400"
+                    : skill.status === "in-progress"
                       ? "bg-blue-100 text-blue-700 dark:bg-blue-800/30 dark:text-blue-400"
                       : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
-                  }`}>
+                    }`}>
                   {skill.name}
                 </span>
               ))}
@@ -512,13 +520,12 @@ export const SkillGaps = ({ gaps }) => {
                 {gap.skill}
               </h3>
               <span
-                className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${
-                  gap.impact === "high"
-                    ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                    : gap.impact === "medium"
+                className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${gap.impact === "high"
+                  ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                  : gap.impact === "medium"
                     ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
                     : "bg-gray-100 text-gray-600"
-                }`}>
+                  }`}>
                 {gap.impact}
               </span>
             </div>
@@ -559,9 +566,8 @@ export const CareerDirection = ({ direction }) => {
               Career Direction
             </h2>
             <span
-              className={`px-3 py-1 rounded-full text-xs font-bold ${
-                confidenceColors[direction.confidence]
-              }`}>
+              className={`px-3 py-1 rounded-full text-xs font-bold ${confidenceColors[direction.confidence]
+                }`}>
               {direction.confidence} confidence
             </span>
           </div>

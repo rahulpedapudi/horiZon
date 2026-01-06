@@ -70,6 +70,214 @@ const CURIOSITY_SUGGESTIONS = [
   "Cloud Computing",
 ];
 
+// New: Mapping for specific branches/education types
+const BRANCH_CURIOSITY = {
+  // Engineering Branches
+  "CSE / IT": [
+    "Full Stack Dev",
+    "AI/ML",
+    "Cloud Computing",
+    "Cybersecurity",
+    "Blockchain",
+    "DevOps",
+    "Game Dev",
+    "Data Science",
+  ],
+  "ECE": [
+    "VLSI Design",
+    "Embedded Systems",
+    "IoT",
+    "Robotics",
+    "Signal Processing",
+    "Chip Design",
+    "Communication Eng",
+  ],
+  "EEE": [
+    "Electric Vehicles",
+    "Power Systems",
+    "Renewable Energy",
+    "IoT",
+    "Automation",
+    "Control Systems",
+  ],
+  "Mechanical": [
+    "Robotics",
+    "CAD/CAM",
+    "Automotive",
+    "Mechatronics",
+    "Aerospace",
+    "3D Printing",
+    "Thermodynamics",
+  ],
+  "Civil": [
+    "Smart Cities",
+    "Structural Eng",
+    "Green Building",
+    "Urban Planning",
+    "Construction Tech",
+    "GIS",
+  ],
+  "Chemical": [
+    "Material Science",
+    "Nanotechnology",
+    "Green Chemistry",
+    "Process Eng",
+    "Bio-fuel",
+  ],
+
+  // Other Education Types
+  "Medical (MBBS / Allied)": [
+    "Genetics",
+    "Neuroscience",
+    "Public Health",
+    "Medical Tech",
+    "Bioinformatics",
+  ],
+  "Science / Arts / Commerce": [
+    "Economics",
+    "Physics",
+    "Psychology",
+    "Statistics",
+    "Literature",
+    "History",
+  ],
+  "Government Exam Aspirant": [
+    "Current Affairs",
+    "Polity",
+    "History",
+    "Economy",
+    "Aptitude",
+    "General Science",
+  ],
+};
+
+// New: Mapping for other roles (Trader, Business, etc.)
+const ROLE_CURIOSITY = {
+  // Trader / Investor
+  "Stock Market": [
+    "Technical Analysis",
+    "Fundamental Analysis",
+    "Options Trading",
+    "Swing Trading",
+    "IPO Analysis",
+    "Market Psychology",
+  ],
+  "Crypto": [
+    "Blockchain Basics",
+    "DeFi (Decentralized Finance)",
+    "NFTs",
+    "Smart Contracts",
+    "Tokenomics",
+    "Mining & Staking",
+  ],
+  "Forex": [
+    "Currency Pairs",
+    "Global Economics",
+    "Central Bank Policies",
+    "Leverage & Margin",
+    "Price Action",
+  ],
+  "Commodities": [
+    "Gold & precious metals",
+    "Oil & Gas",
+    "Agriculture Futures",
+    "Supply Chain trends",
+    "Geopolitics",
+  ],
+  "Long-term Investing": [
+    "Value Investing",
+    "Dividend Growth",
+    "ETFs & Index Funds",
+    "Retirement Planning",
+    "Asset Allocation",
+  ],
+
+  // Business / Startup
+  "Tech / SaaS": [
+    "Product Management",
+    "MVP Development",
+    "Growth Hacking",
+    "Venture Capital",
+    "SaaS Metrics (ARR/churn)",
+  ],
+  "E-commerce": [
+    "Shopify/WooCommerce",
+    "Dropshipping",
+    "Digital Marketing",
+    "Supply Chain Mgmt",
+    "Brand Building",
+  ],
+  "Local business": [
+    "Local SEO",
+    "Retail Management",
+    "Inventory Systems",
+    "Customer Loyalty",
+    "Franchising",
+  ],
+  "Services": [
+    "Client Acquisition",
+    "Agency Model",
+    "Consulting Frameworks",
+    "Freelancing",
+    "B2B Sales",
+  ],
+  "Creator economy": [
+    "Personal Branding",
+    "Video Editing",
+    "Social Media Algorithms",
+    "Monetization Strategies",
+    "Community Building",
+  ],
+
+  // Career Switcher
+  "Tech": [
+    "Coding Bootcamps",
+    "Data Science",
+    "UX/UI Design",
+    "Product Mgmt",
+    "Remote Work",
+  ],
+  "Business": [
+    "MBA Essentials",
+    "Project Management",
+    "Business Strategy",
+    "Leadership",
+    "Marketing",
+  ],
+  "Research": [
+    "Academic Writing",
+    "Grant Applications",
+    "Data Analysis",
+    "PhD Pathways",
+    "Lab Techniques",
+  ],
+
+  // Fallback Roles
+  "trader": [
+    "Market Trends",
+    "Risk Management",
+    "Portfolio Theory",
+    "Financial Freedom",
+    "Trading Psychology",
+  ],
+  "business": [
+    "Entrepreneurship",
+    "Leadership",
+    "Marketing",
+    "Sales",
+    "Finance",
+    "Innovation",
+  ],
+  "learner": [
+    "Critical Thinking",
+    "History of Science",
+    "Philosophy",
+    "Future Tech",
+    "Psychology",
+    "Arts & Culture",
+  ],
+};
+
 const LEARNING_PREFS = [
   "Project-based learning",
   "Visual explanations (diagrams, videos)",
@@ -338,7 +546,32 @@ const Onboarding = () => {
       s.condition ? s.condition(formData) : true
     );
     // Append common steps (Curiosity -> Preferences)
-    return [...roleSteps, ...COMMON_POST_STEPS];
+    // Dynamic Curiosity Suggestions based on Branch or Education Type or Role-specific fields
+    const key =
+      formData.branch ||
+      formData.education_type ||
+      formData.market_type ||
+      formData.domain ||
+      formData.target_direction ||
+      role; // Fallback to role ID itself
+
+    let dynamicSuggestions = CURIOSITY_SUGGESTIONS;
+
+    // Check BRANCH_CURIOSITY first, then ROLE_CURIOSITY
+    if (key && BRANCH_CURIOSITY[key]) {
+      dynamicSuggestions = BRANCH_CURIOSITY[key];
+    } else if (key && ROLE_CURIOSITY[key]) {
+      dynamicSuggestions = ROLE_CURIOSITY[key];
+    }
+
+    const adaptedCommonSteps = COMMON_POST_STEPS.map((s) => {
+      if (s.id === "curiosity") {
+        return { ...s, suggestions: dynamicSuggestions };
+      }
+      return s;
+    });
+
+    return [...roleSteps, ...adaptedCommonSteps];
   };
 
   const activeFlowSteps = getActiveFlowSteps();
@@ -503,11 +736,10 @@ const Onboarding = () => {
                       onClick={() => updateData("exposure_level", level)}
                       className={`
                                    p-3 rounded-lg border cursor-pointer transition-all flex items-center justify-between
-                                   ${
-                                     formData.exposure_level === level
-                                       ? "border-black dark:border-white bg-gray-50 dark:bg-gray-900"
-                                       : "border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 hover:bg-gray-50 dark:hover:bg-gray-900"
-                                   }
+                                   ${formData.exposure_level === level
+                          ? "border-black dark:border-white bg-gray-50 dark:bg-gray-900"
+                          : "border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 hover:bg-gray-50 dark:hover:bg-gray-900"
+                        }
                                  `}>
                       <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
                         {level}
@@ -753,11 +985,10 @@ const Onboarding = () => {
               <button
                 onClick={handleBack}
                 disabled={step === 1}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-colors ${
-                  step === 1
-                    ? "invisible"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900"
-                }`}>
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-colors ${step === 1
+                  ? "invisible"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900"
+                  }`}>
                 <ArrowLeft size={18} /> Back
               </button>
 
@@ -804,29 +1035,26 @@ const SelectionCard = ({
     onClick={onClick}
     className={`
         group relative p-5 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-4
-        ${
-          selected
-            ? "border-black dark:border-white bg-gray-50 dark:bg-gray-900"
-            : "border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 bg-white dark:bg-gray-950"
-        }
+        ${selected
+        ? "border-black dark:border-white bg-gray-50 dark:bg-gray-900"
+        : "border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 bg-white dark:bg-gray-950"
+      }
       `}>
     {Icon && (
       <div
-        className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
-          selected
-            ? "bg-black text-white dark:bg-white dark:text-black"
-            : "bg-gray-100 dark:bg-gray-900 text-gray-500 group-hover:bg-gray-200 dark:group-hover:bg-gray-800"
-        }`}>
+        className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${selected
+          ? "bg-black text-white dark:bg-white dark:text-black"
+          : "bg-gray-100 dark:bg-gray-900 text-gray-500 group-hover:bg-gray-200 dark:group-hover:bg-gray-800"
+          }`}>
         <Icon size={24} strokeWidth={1.5} />
       </div>
     )}
     <div className="flex-1">
       <h3
-        className={`font-semibold text-lg ${
-          selected
-            ? "text-gray-900 dark:text-white"
-            : "text-gray-700 dark:text-gray-300"
-        }`}>
+        className={`font-semibold text-lg ${selected
+          ? "text-gray-900 dark:text-white"
+          : "text-gray-700 dark:text-gray-300"
+          }`}>
         {label}
       </h3>
       {description && (
@@ -842,11 +1070,10 @@ const SelectionCard = ({
     )}
     {multi && (
       <div
-        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-          selected
-            ? "bg-black border-black dark:bg-white dark:border-white"
-            : "border-gray-300 dark:border-gray-600"
-        }`}>
+        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selected
+          ? "bg-black border-black dark:bg-white dark:border-white"
+          : "border-gray-300 dark:border-gray-600"
+          }`}>
         {selected && (
           <Check
             size={14}

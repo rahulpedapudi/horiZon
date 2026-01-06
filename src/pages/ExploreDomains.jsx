@@ -51,6 +51,18 @@ const ExploreDomains = () => {
         {domains.map((d) => (
           <div
             key={d.id}
+            onClick={() => {
+              if (d.id === "it") {
+                // For IT, maybe navigate to a landing page or just SE roadmap for now
+                // Since we have multiple IT roadmaps, ideally we'd go to a selection, 
+                // but let's default to Software Engineer for now or a general roadmaps page
+                window.location.href = "/roadmaps/software-engineer";
+              } else {
+                // Show a simple browser alert or custom toast if available. 
+                // Using alert for simplicity unless a toast context is active.
+                alert(`The ${d.name} roadmap is currently being built by our domain experts. Check back soon!`);
+              }
+            }}
             className="group p-6 rounded-2xl bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:bg-slate-800 transition-all cursor-pointer">
             <div
               className={`w-14 h-14 rounded-xl bg-gray-100 dark:bg-slate-900 ${d.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
