@@ -3,13 +3,14 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
-import "./config/passport.js";
+// import "./config/passport.js"; // Temporarily disabled to allow server start without Google Keys
 
 // Route imports
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 import newsRoutes from "./routes/news.js";
 import jobsRoutes from "./routes/jobs.js";
+import assessmentRoutes from "./routes/assessment.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -32,10 +33,20 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/jobs", jobsRoutes);
+app.use("/api/assessment", assessmentRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// Debug Env (Temporary)
+app.get("/api/debug-env", (req, res) => {
+  res.json({
+    hasKey: !!process.env.GEMINI_API_KEY,
+    cwd: process.cwd(),
+    keyLength: process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.length : 0
+  });
 });
 
 // Error handler
@@ -51,6 +62,7 @@ app.get("/", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+  console.log("SERVER VERSION DEBUG: 2.0 (Direct Fetch)");
 });
 
-// Trigger restart for env update
+// Trigger restart for Gemini API Key update
