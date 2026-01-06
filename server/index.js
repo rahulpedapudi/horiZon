@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
-// import "./config/passport.js"; // Temporarily disabled to allow server start without Google Keys
+import "./config/passport.js";
 
 // Route imports
 import authRoutes from "./routes/auth.js";
